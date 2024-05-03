@@ -41,7 +41,7 @@ cd build
 ./exe
 ```
 
-At the end of the execution, in the build directory you will find two additional files, namely `potential.txt` and `g.txt`: the first contains the potential in function of time during the equilibration; the second contains the 2-body radial distribution function in function of the distance.  
+At the end of the execution, in the build directory you will find three additional files, namely `potential.txt`, `E_tot.txt` and `g.txt`: the first contains the potential in function of time during the equilibration; the second contains the total energy in function of time during the production phase; the last one contains the 2-body radial distribution function in function of the distance.  
 You can plot them with your favourite tool; if you have `gnuplot` installed, a simple way to visualize the results is to open the build directory in the terminal and type:
 
 ```bash
@@ -74,7 +74,6 @@ python main.py
 
 ## Future improvements
 
-* Calculate total energy during the production run
 * Print the trajectory in a VMD-compatible format
 * Add the neighbour list
 

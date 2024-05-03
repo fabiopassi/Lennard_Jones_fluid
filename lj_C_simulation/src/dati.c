@@ -18,7 +18,7 @@ double** allocate_double_matrix(int rows, int cols) {
 
 
 
-void free_matrix(double** matrix, int rows, int cols){
+void free_matrix(double** matrix, int rows){
     /* Function to free a matrix */
 
     for (int i = 0; i < rows; i++) {
@@ -35,7 +35,7 @@ void free_matrix(double** matrix, int rows, int cols){
 
 
 
-void generate_FCC(unsigned int N, double L, double** x)
+void generate_FCC(double L, double** x)
 {
   /*
     This function fills the matrix x[N][3] with the coordinates of
@@ -88,7 +88,7 @@ void generate_FCC(unsigned int N, double L, double** x)
 
 
 
-void calculate_forces (unsigned int N, double** x, double** a, double cutoff, double L){
+void calculate_forces(double** x, double** a, double L){
 
 	/* Initialize acceleration to zero */
 	for (int i = 0; i < N; i++){
@@ -125,7 +125,7 @@ void calculate_forces (unsigned int N, double** x, double** a, double cutoff, do
 
 
 
-void velocity_verlet(unsigned int N, double** x, double** v, double** a, double dt, double cutoff, double L){
+void velocity_verlet(double** x, double** v, double** a, double L){
 	/* Velocity-verlet algorithm */
 
 	double v_dt_2[N][3];					/* Intermediate velocities */
@@ -136,13 +136,10 @@ void velocity_verlet(unsigned int N, double** x, double** v, double** a, double 
 			v_dt_2[i][k]= v[i][k]+ a[i][k]*dt*0.5;
 			/* Update positions */
 			x[i][k]= x[i][k] +v_dt_2[i][k]*dt;
-			/* Periodic boundary conditions */
-			// if (x[i][k] < 0) { x[i][k] += L; }
-			// if (x[i][k] > L) { x[i][k] -= L; }
 		}
 	}
 	/* Update forces */
-	calculate_forces (N, x, a, cutoff, L);
+	calculate_forces(x, a, L);
 	/* Second update of the velocities */
 	for (int i = 0; i < N; i++){
 		for(int k = 0;k < 3; k++){
@@ -153,7 +150,7 @@ void velocity_verlet(unsigned int N, double** x, double** v, double** a, double 
 
 
 
-double kinetic_energy (unsigned int N, double** v){
+double kinetic_energy(double** v){
 	/* Function to calculate the average kinetic energy */
 
 	double K = 0;
@@ -169,13 +166,13 @@ double kinetic_energy (unsigned int N, double** v){
 
 
 
-void rescale_velocities(unsigned int N, double** v, double T){
+void rescale_velocities(double** v){
 	/* Berendsen thermostat */
 
 	int i,k;
 	double alfa, K_i, T_i;
 	/* Calculate rescaling factor */
-	K_i = kinetic_energy(N, v);
+	K_i = kinetic_energy(v);
 	T_i = 2.0 * K_i / 3;
 	alfa = sqrt(T/T_i);
 	/* Rescale velocities */
@@ -188,7 +185,7 @@ void rescale_velocities(unsigned int N, double** v, double T){
 
 
 
-double v_lenard_jones (unsigned int N, double** x, double L, double cutoff, double rho) {
+double v_lenard_jones(double** x, double L) {
 	/* Function to calculate the LJ potential */
 	double U_tot, dx[3], r_2;
 	U_tot = 0;
@@ -216,7 +213,7 @@ double v_lenard_jones (unsigned int N, double** x, double L, double cutoff, doub
 
 
 
-void eval_g (unsigned int N, double* g, double** x, double L){
+void eval_g(double* g, double** x, double L){
 	/* Evaluate histogram measuring the distances between all the couples of particles */
 
 	int i, j, k, bin;

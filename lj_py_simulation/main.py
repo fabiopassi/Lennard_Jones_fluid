@@ -69,6 +69,9 @@ print("Starting the NVE simulation.\n")
 
 # Production run without thermostat
 t_count = 0                               # Reset counter
+t_prod = []
+E_tot = []
+
 while (t_count <= t_run) :
 
     # Time integration
@@ -76,8 +79,13 @@ while (t_count <= t_run) :
     
     # Measure
     if ( t_count % t_measure == 0 ) :
-        U_mean += V_LJ(x, cutoff, L, rho)
-        K_mean += kinetic_energy(v)
+        # Measure energies
+        U_tmp = V_LJ(x, cutoff, L, rho)
+        K_tmp = kinetic_energy(v)
+        U_mean += U_tmp
+        K_mean += K_tmp
+        t_prod.append(t_count)
+        E_tot.append(K_tmp + N * U_tmp)
         # I measure the histogram for all particles and I sum it to my g vector
         hist = eval_g(x, L, dr, S)
         g = g + hist
@@ -113,9 +121,18 @@ print(f"\nExecution time = {end-start:.3f} s\n")
 
 # Plot of the potential
 fig, ax = plt.subplots()
+ax.set_title("Equilibration phase: potential energy")
 ax.plot(t, U)
-ax.set_xlabel('t')
-ax.set_ylabel('U')
+ax.set_xlabel('t', fontsize=18)
+ax.set_ylabel('U', fontsize=18)
+plt.show()
+
+# Plot of the total energy
+fig, ax = plt.subplots()
+ax.set_title("Production phase: total energy")
+ax.plot(t_prod, E_tot)
+ax.set_xlabel('t', fontsize=18)
+ax.set_ylabel('E', fontsize=18)
 plt.show()
 
 # Plot of the g(r)
